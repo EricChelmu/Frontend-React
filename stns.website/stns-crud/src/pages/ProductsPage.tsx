@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import productService from "../services/ProductService";
 import Cookies from "js-cookie";
 import "../assets/AllProductsPage.css";
@@ -19,6 +19,8 @@ const ProductsPage: React.FC = () => {
   const [quantityError, setQuantityError] = useState<string | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -107,6 +109,16 @@ const ProductsPage: React.FC = () => {
     setSearchQuery(event.target.value);
   };
 
+  const handleEdit = (product: any) => {
+    setIsDropdownOpen(!isDropdownOpen);
+    setUpdateFormData({
+      id: product.id,
+      name: product.name,
+      quantity: product.quantity,
+      price: product.price,
+    });
+  };
+
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -180,44 +192,51 @@ const ProductsPage: React.FC = () => {
           <ul className="product-grid">
             {filteredProducts.map(product => (
               <li key={product.id} className="product-item">
-                <strong>Name:</strong> {product.name} <strong>Quantity:</strong> {product.quantity}
+                <strong className="product-name">Name:</strong> {product.name}{" "}
+                <strong>Quantity:</strong> {product.quantity}
                 <strong>Price:</strong> {product.price} <strong>Category:</strong>{" "}
                 {product.category}
-                <div className="edit-dropdown">
-                  <button className="button">Edit</button>
-                  <div className="dropdown-content">
-                    <input
-                      type="text"
-                      placeholder="Name"
-                      value={updateFormData.name}
-                      onChange={e => setUpdateFormData({ ...updateFormData, name: e.target.value })}
-                    />
-                    {nameError && <div className="error-message">{nameError}</div>}
-                    <input
-                      type="number"
-                      placeholder="Quantity"
-                      value={updateFormData.quantity}
-                      onChange={e =>
-                        setUpdateFormData({ ...updateFormData, quantity: e.target.value })
-                      }
-                    />
-                    {quantityError && <div className="error-message">{quantityError}</div>}
-                    <input
-                      type="number"
-                      placeholder="Price"
-                      value={updateFormData.price}
-                      onChange={e =>
-                        setUpdateFormData({ ...updateFormData, price: e.target.value })
-                      }
-                    />
-                    {priceError && <div className="error-message">{priceError}</div>}
-                    <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
-                      Update
-                    </button>
-                    <button className="delete-button" onClick={() => handleDelete(product.id)}>
-                      Delete
-                    </button>
-                  </div>
+                <div className="edit-dropdown" ref={dropdownRef}>
+                  <button className="button" onClick={() => handleEdit(product)}>
+                    Edit
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="dropdown-content">
+                      <input
+                        type="text"
+                        placeholder={`Name: ${product.name}`}
+                        value={updateFormData.name}
+                        onChange={e =>
+                          setUpdateFormData({ ...updateFormData, name: e.target.value })
+                        }
+                      />
+                      {nameError && <div className="error-message">{nameError}</div>}
+                      <input
+                        type="number"
+                        placeholder={`Quantity: ${product.quantity}`}
+                        value={updateFormData.quantity}
+                        onChange={e =>
+                          setUpdateFormData({ ...updateFormData, quantity: e.target.value })
+                        }
+                      />
+                      {quantityError && <div className="error-message">{quantityError}</div>}
+                      <input
+                        type="number"
+                        placeholder={`Price: ${product.price}`}
+                        value={updateFormData.price}
+                        onChange={e =>
+                          setUpdateFormData({ ...updateFormData, price: e.target.value })
+                        }
+                      />
+                      {priceError && <div className="error-message">{priceError}</div>}
+                      <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
+                        Update
+                      </button>
+                      <button className="delete-button" onClick={() => handleDelete(product.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               </li>
             ))}
