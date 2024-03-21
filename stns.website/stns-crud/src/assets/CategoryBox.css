@@ -1,0 +1,18 @@
+.category-box {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+  }
+  
+.category-box h3 {
+    margin: 0;
+}
+  
+.category-box a {
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
