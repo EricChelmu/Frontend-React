@@ -20,6 +20,8 @@ const ProductsPage: React.FC = () => {
   const [priceError, setPriceError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -96,7 +98,7 @@ const ProductsPage: React.FC = () => {
         console.error("Error deleting product: Invalid product ID");
         return;
       }
-
+      setShowConfirmation(false);
       const token = Cookies.get("token") || "";
       await productService.deleteProduct(id, token);
       fetchProducts();
@@ -117,6 +119,11 @@ const ProductsPage: React.FC = () => {
       quantity: product.quantity,
       price: product.price,
     });
+  };
+
+  const toggleConfirmation = (productId: number | null) => {
+    setShowConfirmation(!showConfirmation);
+    setDeleteProductId(productId);
   };
 
   const filteredProducts = products.filter(product =>
@@ -232,9 +239,26 @@ const ProductsPage: React.FC = () => {
                       <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
                         Update
                       </button>
-                      <button className="delete-button" onClick={() => handleDelete(product.id)}>
+                      <button
+                        className="delete-button"
+                        onClick={() => toggleConfirmation(product.id)}
+                      >
                         Delete
                       </button>
+                      {showConfirmation && deleteProductId === product.id && (
+                        <div className="confirmation-dialog">
+                          <p>Are you sure you want to delete this item?</p>
+                          <button className="button" onClick={() => handleDelete(product.id)}>
+                            Yes
+                          </button>
+                          <button
+                            className="delete-button"
+                            onClick={() => toggleConfirmation(null)}
+                          >
+                            No
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
