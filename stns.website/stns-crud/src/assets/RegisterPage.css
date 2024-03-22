@@ -23,3 +23,9 @@
     padding: 8px;
     margin-bottom: 10px;
   }
+
+  .registration-form div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
