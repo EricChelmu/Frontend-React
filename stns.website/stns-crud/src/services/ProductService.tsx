@@ -15,6 +15,9 @@ const ProductService = {
           name: productData.name,
           quantity: productData.quantity,
           price: productData.price,
+          category: {
+            id: productData.categoryId,
+          },
         },
         { headers }
       );

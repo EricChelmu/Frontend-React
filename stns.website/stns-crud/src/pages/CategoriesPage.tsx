@@ -37,7 +37,7 @@ const CategoriesPage: React.FC = () => {
     };
 
     fetchCategories();
-  }, []); // Run effect only once when the component mounts
+  }, []);
 
   const totalPages = Math.ceil(categories.length / categoriesPerPage);
 

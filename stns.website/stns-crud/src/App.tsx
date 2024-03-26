@@ -8,6 +8,7 @@ import ProductsPage from "./pages/ProductsPage";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import Cookies from "js-cookie";
 import { AuthProvider } from "./context/AuthContext";
+import NewProduct from "./pages/NewProduct";
 
 const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = React.useState(false);
@@ -25,8 +26,6 @@ const App: React.FC = () => {
   return (
     <Router>
       <AuthProvider>
-        {" "}
-        {/* Wrap the App with AuthProvider and pass isLoggedIn state */}
         <div>
           <nav>
             <ul>
@@ -53,7 +52,10 @@ const App: React.FC = () => {
                     <Link to="/all-categories">All Categories</Link>
                   </li>
                   <li>
-                    <Link to="/all-products">All Products</Link> {/* New link */}
+                    <Link to="/all-products">All Products</Link>
+                  </li>
+                  <li>
+                    <Link to="/new-product">New Product</Link>
                   </li>
                 </React.Fragment>
               )}
@@ -76,6 +78,7 @@ const App: React.FC = () => {
               <Route path="/new-category" element={<NewCategory />} />
               <Route path="/all-categories" element={<CategoriesPage />} />
               <Route path="/all-products" element={<ProductsPage />} />
+              <Route path="/new-product" element={<NewProduct />} />
             </Route>
           </Routes>
         </div>
