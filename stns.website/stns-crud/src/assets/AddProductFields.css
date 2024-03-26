@@ -1,10 +1,28 @@
+.container {
+  flex-direction: column;
+  height: 100vh; /* Adjust height as needed */
+}
+
+.form {
+  width: 50%; /* Adjust width to make it half the size */
+}
+
 .product-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .product-input {
-    width: 45%;
-    margin-bottom: 10px;
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.product-input {
+  width: calc(50% - 10px); /* Adjusted width to be half the size */
+  margin-bottom: 10px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  margin-right: 10px; /* Adjust spacing between buttons */
+}

@@ -83,8 +83,6 @@ const NewCategory: React.FC = () => {
       await categoryService.postCategory(categoryDataWithProducts, token);
 
       setCategoryData(initialCategoryData);
-
-      // Optionally, you can perform additional logic after saving both category and products
     } catch (error) {
       console.error("Error posting category:", error);
       setCategoryError("An error occurred while submitting the category. Please try again.");
@@ -139,13 +137,15 @@ const NewCategory: React.FC = () => {
         </div>
         {categoryError && <div className="error-message">{categoryError}</div>}
 
-        <button className="button" type="button" onClick={handleAddProduct}>
-          Add Product
-        </button>
+        <div className="button-group">
+          <button className="button" type="button" onClick={handleAddProduct}>
+            Add Product
+          </button>
 
-        <button className="button" type="submit">
-          Submit Category
-        </button>
+          <button className="button" type="submit">
+            Submit Category
+          </button>
+        </div>
       </form>
     </div>
   );

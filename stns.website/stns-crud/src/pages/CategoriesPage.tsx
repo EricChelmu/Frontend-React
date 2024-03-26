@@ -24,7 +24,6 @@ const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
 
   useEffect(() => {
-    // Fetch categories from the API and update state
     const fetchCategories = async () => {
       try {
         const token = Cookies.get("token") || "";
