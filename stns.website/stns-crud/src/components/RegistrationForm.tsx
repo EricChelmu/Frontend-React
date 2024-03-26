@@ -49,10 +49,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onRegistration }) =
       }
       resetForm();
     } catch (error) {
-      // Type cast error to AxiosError
       const axiosError = error as AxiosError;
 
-      // Check if response property exists before accessing its data property
       if (axiosError.response && axiosError.response.data) {
         console.error("Request failed:", axiosError.response.data);
       } else {

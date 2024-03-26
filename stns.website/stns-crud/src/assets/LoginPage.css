@@ -16,31 +16,29 @@
     height: 100vh;
 }
 
-/* Increasing font size for all text */
 body {
-    font-size: 20px; /* Adjust the value as needed */
+    font-size: 20px;
   }
   
-  /* Increasing font size for specific elements */
   .login-page h1 {
-    font-size: 30px; /* Adjust the value as needed */
+    font-size: 30px;
   }
   
-  .login-page input[type="text"],
-  .login-page input[type="password"] {
-    font-size: 20px; /* Adjust the value as needed */
-    padding: 15px; /* Adjust the value as needed */
-    width: calc(100% - 30px); /* Adjust the value as needed */
-    box-sizing: border-box;
-  }
+ 
   
-  /* Increasing padding for all input fields */
-  input[type="text"],
-  input[type="password"] {
-    padding: 15px; /* Adjust the value as needed */
-  }
-  
-  /* Increasing padding for specific input fields */
   .login-page input[type="submit"] {
-    padding: 15px 30px; /* Adjust the value as needed */
+    padding: 15px 30px;
   }
+
+  .login-form div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .login-form input[type="username"],
+.login-form input[type="password"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}

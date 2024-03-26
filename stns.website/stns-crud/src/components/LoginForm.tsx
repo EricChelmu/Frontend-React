@@ -5,6 +5,7 @@ import "../index.css";
 import "../assets/LoginPage.css";
 import "../assets/ErrorMessage.css";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 interface LoginFormProps {
   onLogin: (formData: { username: string; password: string }) => void;
@@ -15,6 +16,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setToken } = useAuth();
 
   useEffect(() => {
     const storedToken = Cookies.get("authToken");
@@ -38,6 +40,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
   const handleLoginSuccess = (token: string) => {
     Cookies.set("token", token, { sameSite: "None", secure: true });
+    setToken(token);
     console.log("Login successful:", token);
     resetForm();
     onLogin(formData);
@@ -46,7 +49,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoginError(null); // Reset login error on each submission
+    setLoginError(null);
 
     try {
       const response = await axios.post("http://localhost:9191/users/authenticate", formData, {

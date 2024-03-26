@@ -209,6 +209,7 @@ const ProductsPage: React.FC = () => {
                   </button>
                   {isDropdownOpen && (
                     <div className="dropdown-content">
+                      <label htmlFor={`name-${product.id}`}>Name:</label>
                       <input
                         type="text"
                         placeholder={`Name: ${product.name}`}
@@ -218,6 +219,7 @@ const ProductsPage: React.FC = () => {
                         }
                       />
                       {nameError && <div className="error-message">{nameError}</div>}
+                      <label htmlFor={`quantity-${product.id}`}>Quantity:</label>
                       <input
                         type="number"
                         placeholder={`Quantity: ${product.quantity}`}
@@ -227,6 +229,7 @@ const ProductsPage: React.FC = () => {
                         }
                       />
                       {quantityError && <div className="error-message">{quantityError}</div>}
+                      <label htmlFor={`price-${product.id}`}>Price:</label>
                       <input
                         type="number"
                         placeholder={`Price: ${product.price}`}
@@ -236,15 +239,17 @@ const ProductsPage: React.FC = () => {
                         }
                       />
                       {priceError && <div className="error-message">{priceError}</div>}
-                      <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
-                        Update
-                      </button>
-                      <button
-                        className="delete-button"
-                        onClick={() => toggleConfirmation(product.id)}
-                      >
-                        Delete
-                      </button>
+                      <div className="button-group">
+                        <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
+                          Update
+                        </button>
+                        <button
+                          className="delete-button"
+                          onClick={() => toggleConfirmation(product.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                       {showConfirmation && deleteProductId === product.id && (
                         <div className="confirmation-dialog">
                           <p>Are you sure you want to delete this item?</p>

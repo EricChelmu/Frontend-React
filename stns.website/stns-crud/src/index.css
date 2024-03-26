@@ -23,7 +23,7 @@
 .nav-button {
   display: block;
   color: white;
-  font-size: 14px;
+  font-size: 18px;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -68,6 +68,8 @@ nav a:hover {
 
 input[type="text"],
 input[type="number"],
+input[type="email"],
+input[type="password"],
 select {
   width: 100%;
   padding: 10px;
