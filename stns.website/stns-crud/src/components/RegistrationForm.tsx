@@ -1,6 +1,6 @@
 import React from "react";
 import axios, { AxiosError } from "axios";
-import "../assets/RegisterPage.css";
+import "../assets/css/RegisterPage.css";
 
 interface FormData {
   name: string;

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
 import "../index.css";
-import "../assets/LoginPage.css";
-import "../assets/ErrorMessage.css";
+import "../assets/css/LoginPage.css";
+import "../assets/css/ErrorMessage.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 

@@ -1,6 +1,6 @@
 import React from "react";
-import { CategoryData } from "../pages/CategoriesPage";
-import "../assets/CategoryBox.css";
+import { CategoryData } from "../pages/Categories";
+import "../assets/css/CategoryBox.css";
 
 interface CategoryBoxProps {
   category: CategoryData;

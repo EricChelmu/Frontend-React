@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import categoryService from "../services/CategoryService";
 import Cookies from "js-cookie";
-import "../index.css";
-import "../assets/AddProductFields.css";
+import "../assets/css/NewCategory.css";
 
 interface ProductData {
   name: string;

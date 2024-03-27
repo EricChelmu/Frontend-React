@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { CategoryData } from "./CategoriesPage";
+import { CategoryData } from "./Categories";
 import Cookies from "js-cookie";
 import CategoryService from "../services/CategoryService";
 import ProductService from "../services/ProductService";
-import "../assets/NewProduct.css";
+import CategoryListbox from "../components/CategoryListBox";
+import "../assets/css/NewProduct.css";
 
 const ProductForm = () => {
   const [formData, setFormData] = useState({
@@ -135,16 +136,14 @@ const ProductForm = () => {
           <input type="text" name="quantity" value={formData.quantity} onChange={handleChange} />
           {quantityError && <div className="error-message">{quantityError}</div>}
         </div>
-        <div className="form-group">
-          <label className="form-label">Category:</label>
-          <input
-            type="text"
-            name="category"
+        <div>
+          <label>Category:</label>
+          <CategoryListbox
             value={formData.categoryId}
-            onChange={e => {
-              handleChange(e);
-              handleCategorySearch(e.target.value);
-            }}
+            onChange={(category: CategoryData) =>
+              setFormData({ ...formData, categoryId: category.id.toString() })
+            }
+            categories={categories}
           />
           {categoryError && <div className="error-message">{categoryError}</div>}
           <ul className="category-list">

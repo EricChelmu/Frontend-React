@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import productService from "../services/ProductService";
 import Cookies from "js-cookie";
-import "../assets/AllProductsPage.css";
+import "../assets/css/AllProductsPage.css";
 import "../index.css";
 
 const ProductsPage: React.FC = () => {

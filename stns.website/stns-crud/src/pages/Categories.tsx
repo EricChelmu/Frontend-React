@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import categoryService from "../services/CategoryService";
 import Cookies from "js-cookie";
 import CategoryBox from "../components/CategoryBox";
-import "../assets/AllCategories.css";
+import "../assets/css/AllCategories.css";
 
 const categoriesPerPage = 3;
 
