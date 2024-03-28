@@ -29,5 +29,19 @@ const CategoryService = {
       throw error;
     }
   },
+
+  getPaginatedCategories: async (token: string | null, page: number, size: number) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/category/all?page=${page}&size=${size}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
+
 export default CategoryService;

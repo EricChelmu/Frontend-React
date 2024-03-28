@@ -4,8 +4,6 @@ import Cookies from "js-cookie";
 import CategoryBox from "../components/CategoryBox";
 import "../assets/css/AllCategories.css";
 
-const categoriesPerPage = 3;
-
 interface ProductData {
   id: number;
   name: string;
@@ -20,59 +18,64 @@ export interface CategoryData {
 }
 
 const CategoriesPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState<CategoryData[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const token = Cookies.get("token") || "";
-        const response = await categoryService.getAllCategories(token);
-        console.log(response);
-        setCategories(response);
+        const response = await categoryService.getPaginatedCategories(
+          token,
+          currentPage,
+          categoriesPerPage
+        );
+        setCategories(response.content);
+        setTotalPages(response.totalPages);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
 
     fetchCategories();
-  }, []);
+  }, [currentPage]);
 
-  const totalPages = Math.ceil(categories.length / categoriesPerPage);
+  const categoriesPerPage = 3;
 
-  const currentCategories = categories.slice(
-    (currentPage - 1) * categoriesPerPage,
-    currentPage * categoriesPerPage
-  );
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
   };
 
   return (
     <div className="all-categories">
       <h2>All Categories</h2>
-      {currentCategories && currentCategories.length > 0 ? (
-        <React.Fragment>
+      {categories && categories.length > 0 ? (
+        <div>
           <div className="category-boxes">
-            {currentCategories.map(category => (
+            {categories.map(category => (
               <CategoryBox key={category.id} category={category} />
             ))}
           </div>
           {/* Pagination controls */}
           <div className="pagination">
-            <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+            <button onClick={handlePreviousPage} disabled={currentPage === 1}>
               Previous
             </button>
             <span>{`${currentPage} / ${totalPages}`}</span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
+            <button onClick={handleNextPage} disabled={currentPage === totalPages}>
               Next
             </button>
           </div>
-        </React.Fragment>
+        </div>
       ) : (
         <p>No categories found.</p>
       )}

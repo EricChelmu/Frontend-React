@@ -8,7 +8,7 @@ const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(12); // Default page size
+  const [pageSize, setPageSize] = useState<number>(12);
   const [updateFormData, setUpdateFormData] = useState<any>({
     id: "",
     name: "",

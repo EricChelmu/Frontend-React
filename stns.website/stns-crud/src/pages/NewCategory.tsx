@@ -5,7 +5,7 @@ import "../assets/css/NewCategory.css";
 
 interface CategoryData {
   name: string;
-  products: any[]; // Products will be an empty array
+  products: any[];
 }
 
 const NewCategory: React.FC = () => {
