@@ -6,7 +6,9 @@ import "../index.css";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(12);
   const [updateFormData, setUpdateFormData] = useState<any>({
     id: "",
     name: "",
@@ -16,56 +18,67 @@ const ProductsPage: React.FC = () => {
   const [nameError, setNameError] = useState<string | null>(null);
   const [quantityError, setQuantityError] = useState<string | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const observer = useRef<IntersectionObserver | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchProducts();
-  }, [searchQuery, page]);
+  }, [currentPage, pageSize, searchQuery]);
 
   useEffect(() => {
-    observer.current = new IntersectionObserver(handleObserver, {
-      root: null,
-      rootMargin: "20px",
-      threshold: 0.5,
+    setUpdateFormData({
+      id: "",
+      name: "",
+      quantity: "",
+      price: "",
     });
-    if (observer.current && dropdownRef.current) {
-      observer.current.observe(dropdownRef.current);
-    }
+  }, [products]);
+
+  useEffect(() => {
     return () => {
-      if (observer.current && dropdownRef.current) {
-        observer.current.unobserve(dropdownRef.current);
-      }
+      setUpdateFormData({
+        id: "",
+        name: "",
+        quantity: "",
+        price: "",
+      });
     };
   }, []);
 
   const fetchProducts = async () => {
-    if (loading || !hasMore) return;
-    setLoading(true);
     try {
       const token = Cookies.get("token") || "";
-      const response = await productService.getAllProducts(token);
-      setProducts(prevProducts => [...prevProducts, ...response]);
-      setHasMore(response.length > 0);
-      setPage(prevPage => prevPage + 1);
+      const response = await productService.getPaginatedProducts(token, currentPage, pageSize);
+
+      setProducts(response.content);
+      setTotalPages(response.totalPages);
     } catch (error) {
       console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleObserver: IntersectionObserverCallback = entries => {
-    const target = entries[0];
-    if (target.isIntersecting) {
-      fetchProducts();
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const loadPrevious = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
     }
+  };
+
+  const loadNext = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  };
+
+  const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(Number(event.target.value));
+    setCurrentPage(1);
   };
 
   const handleUpdate = async (productId: number) => {
@@ -171,75 +184,104 @@ const ProductsPage: React.FC = () => {
           onChange={handleSearch}
         />
       </div>
+      <div className="page-size-selector">
+        <label htmlFor="pageSize">Products per page:</label>
+        <select id="pageSize" value={pageSize} onChange={handlePageSizeChange}>
+          <option value="5">5</option>
+          <option value="12">12</option>
+          <option value="24">24</option>
+          <option value="35">35</option>
+          <option value="48">48</option>
+        </select>
+      </div>
       {filteredProducts && filteredProducts.length > 0 ? (
-        <ul className="product-grid">
-          {filteredProducts.map(product => (
-            <li key={product.id} className="product-item">
-              <strong className="product-name">Name:</strong> {product.name}{" "}
-              <strong>Quantity:</strong> {product.quantity}
-              <strong>Price:</strong> {product.price} <strong>Category:</strong> {product.category}
-              <div className="edit-dropdown" ref={dropdownRef}>
-                <button className="button" onClick={() => handleEdit(product)}>
-                  Edit
-                </button>
-                {isDropdownOpen && (
-                  <div className="dropdown-content">
-                    <label htmlFor={`name-${product.id}`}>Name:</label>
-                    <input
-                      type="text"
-                      placeholder={`Name: ${product.name}`}
-                      value={updateFormData.name}
-                      onChange={e => setUpdateFormData({ ...updateFormData, name: e.target.value })}
-                    />
-                    {nameError && <div className="error-message">{nameError}</div>}
-                    <label htmlFor={`quantity-${product.id}`}>Quantity:</label>
-                    <input
-                      type="number"
-                      placeholder={`Quantity: ${product.quantity}`}
-                      value={updateFormData.quantity}
-                      onChange={e =>
-                        setUpdateFormData({ ...updateFormData, quantity: e.target.value })
-                      }
-                    />
-                    {quantityError && <div className="error-message">{quantityError}</div>}
-                    <label htmlFor={`price-${product.id}`}>Price:</label>
-                    <input
-                      type="number"
-                      placeholder={`Price: ${product.price}`}
-                      value={updateFormData.price}
-                      onChange={e =>
-                        setUpdateFormData({ ...updateFormData, price: e.target.value })
-                      }
-                    />
-                    {priceError && <div className="error-message">{priceError}</div>}
-                    <div className="button-group">
-                      <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
-                        Update
-                      </button>
-                      <button
-                        className="delete-button"
-                        onClick={() => toggleConfirmation(product.id)}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                    {showConfirmation && deleteProductId === product.id && (
-                      <div className="confirmation-dialog">
-                        <p>Are you sure you want to delete this item?</p>
-                        <button className="button" onClick={() => handleDelete(product.id)}>
-                          Yes
+        <React.Fragment>
+          <ul className="product-grid">
+            {filteredProducts.map(product => (
+              <li key={product.id} className="product-item">
+                <strong className="product-name">Name:</strong> {product.name}{" "}
+                <strong>Quantity:</strong> {product.quantity}
+                <strong>Price:</strong> {product.price} <strong>Category:</strong>{" "}
+                {product.category}
+                <div className="edit-dropdown" ref={dropdownRef}>
+                  <button className="button" onClick={() => handleEdit(product)}>
+                    Edit
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="dropdown-content">
+                      <label htmlFor={`name-${product.id}`}>Name:</label>
+                      <input
+                        type="text"
+                        placeholder={`Name: ${product.name}`}
+                        value={updateFormData.name}
+                        onChange={e =>
+                          setUpdateFormData({ ...updateFormData, name: e.target.value })
+                        }
+                      />
+                      {nameError && <div className="error-message">{nameError}</div>}
+                      <label htmlFor={`quantity-${product.id}`}>Quantity:</label>
+                      <input
+                        type="number"
+                        placeholder={`Quantity: ${product.quantity}`}
+                        value={updateFormData.quantity}
+                        onChange={e =>
+                          setUpdateFormData({ ...updateFormData, quantity: e.target.value })
+                        }
+                      />
+                      {quantityError && <div className="error-message">{quantityError}</div>}
+                      <label htmlFor={`price-${product.id}`}>Price:</label>
+                      <input
+                        type="number"
+                        placeholder={`Price: ${product.price}`}
+                        value={updateFormData.price}
+                        onChange={e =>
+                          setUpdateFormData({ ...updateFormData, price: e.target.value })
+                        }
+                      />
+                      {priceError && <div className="error-message">{priceError}</div>}
+                      <div className="button-group">
+                        <button className="button" onClick={() => handleUpdateSubmit(product.id)}>
+                          Update
                         </button>
-                        <button className="delete-button" onClick={() => toggleConfirmation(null)}>
-                          No
+                        <button
+                          className="delete-button"
+                          onClick={() => toggleConfirmation(product.id)}
+                        >
+                          Delete
                         </button>
                       </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+                      {showConfirmation && deleteProductId === product.id && (
+                        <div className="confirmation-dialog">
+                          <p>Are you sure you want to delete this item?</p>
+                          <button className="button" onClick={() => handleDelete(product.id)}>
+                            Yes
+                          </button>
+                          <button
+                            className="delete-button"
+                            onClick={() => toggleConfirmation(null)}
+                          >
+                            No
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="pagination">
+            <button className="button" onClick={loadPrevious} disabled={currentPage === 1}>
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button className="button" onClick={loadNext} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
+        </React.Fragment>
       ) : (
         <p>No products found.</p>
       )}

@@ -32,7 +32,7 @@ const NewCategory: React.FC = () => {
       const token = Cookies.get("token") || "";
 
       const requestData = {
-        category: categoryData,
+        category: categoryData, // Wrapping categoryData inside the 'category' field
       };
 
       await categoryService.postCategory(requestData, token);
