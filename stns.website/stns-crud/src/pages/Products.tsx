@@ -22,6 +22,7 @@ const ProductsPage: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -48,13 +49,35 @@ const ProductsPage: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    function handleScroll() {
+      if (
+        window.innerHeight + document.documentElement.scrollTop !==
+          document.documentElement.offsetHeight ||
+        loading
+      )
+        return;
+      loadMore();
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading]);
+
+  const loadMore = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
+
   const fetchProducts = async () => {
     try {
+      setLoading(true);
       const token = Cookies.get("token") || "";
       const response = await productService.getPaginatedProducts(token, currentPage, pageSize);
 
-      setProducts(response.content);
+      setProducts(prevProducts => [...prevProducts, ...response.content]);
       setTotalPages(response.totalPages);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
