@@ -23,6 +23,7 @@ const ProductsPage: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,6 +64,19 @@ const ProductsPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [loading]);
 
+  useEffect(() => {
+    console.log("searchQuery changed:", searchQuery);
+    console.log("products changed:", products);
+    const filtered =
+      searchQuery.trim() === ""
+        ? products
+        : products.filter(product =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+    console.log("Filtered products:", filtered);
+    setFilteredProducts(filtered);
+  }, [searchQuery, products]);
+
   const loadMore = () => {
     if (currentPage < totalPages) {
       setCurrentPage(prevPage => prevPage + 1);
@@ -75,7 +89,15 @@ const ProductsPage: React.FC = () => {
       const token = Cookies.get("token") || "";
       const response = await productService.getPaginatedProducts(token, currentPage, pageSize);
 
-      setProducts(prevProducts => [...prevProducts, ...response.content]);
+      if (currentPage === 1) {
+        setProducts([]);
+      }
+
+      const uniqueProducts = response.content.filter((newProduct: any) => {
+        return !products.some((existingProduct: any) => existingProduct.id === newProduct.id);
+      });
+
+      setProducts(prevProducts => [...prevProducts, ...uniqueProducts]);
       setTotalPages(response.totalPages);
       setLoading(false);
     } catch (error) {
@@ -148,10 +170,6 @@ const ProductsPage: React.FC = () => {
     setShowConfirmation(!showConfirmation);
     setDeleteProductId(productId);
   };
-
-  const filteredProducts = products.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   const validateInput = () => {
     let isValid = true;

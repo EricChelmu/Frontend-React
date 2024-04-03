@@ -65,7 +65,6 @@ const CategoriesPage: React.FC = () => {
               <CategoryBox key={category.id} category={category} />
             ))}
           </div>
-          {/* Pagination controls */}
           <div className="pagination">
             <button onClick={handlePreviousPage} disabled={currentPage === 1}>
               Previous
