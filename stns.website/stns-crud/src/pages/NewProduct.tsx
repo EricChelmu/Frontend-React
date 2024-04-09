@@ -19,6 +19,9 @@ const ProductForm = () => {
   const [quantityError, setQuantityError] = useState<string | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
   const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const categoriesPerPage = 12;
 
   const validateInput = () => {
     let isValid = true;
@@ -60,8 +63,13 @@ const ProductForm = () => {
     const fetchCategories = async () => {
       try {
         const token = Cookies.get("token") || "";
-        const fetchedCategories = await CategoryService.getAllCategories(token);
-        setCategories(fetchedCategories);
+        const response = await CategoryService.getPaginatedCategories(
+          token,
+          currentPage,
+          categoriesPerPage
+        );
+        setCategories(response.content);
+        setTotalPages(response.totalPages);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }

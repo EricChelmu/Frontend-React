@@ -26,6 +26,13 @@ const ProductsPage: React.FC = () => {
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  interface UpdateFormData {
+    id: string;
+    name: string;
+    quantity: string;
+    price: string;
+  }
+
   useEffect(() => {
     fetchProducts();
   }, [currentPage, pageSize, searchQuery]);
@@ -64,7 +71,7 @@ const ProductsPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [loading]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     console.log("searchQuery changed:", searchQuery);
     console.log("products changed:", products);
     const filtered =
@@ -75,7 +82,7 @@ const ProductsPage: React.FC = () => {
           );
     console.log("Filtered products:", filtered);
     setFilteredProducts(filtered);
-  }, [searchQuery, products]);
+  }, [searchQuery, products]);*/
 
   const loadMore = () => {
     if (currentPage < totalPages) {
@@ -105,6 +112,20 @@ const ProductsPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    filterProducts();
+  }, [searchQuery, products]);
+
+  const filterProducts = () => {
+    const filtered =
+      searchQuery.trim() === ""
+        ? products
+        : products.filter(product =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+    setFilteredProducts(filtered);
+  };
+
   const goToPage = (page: number) => {
     setCurrentPage(page);
   };
@@ -124,17 +145,6 @@ const ProductsPage: React.FC = () => {
   const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setPageSize(Number(event.target.value));
     setCurrentPage(1);
-  };
-
-  const handleUpdate = async (productId: number) => {
-    try {
-      const token = Cookies.get("token") || "";
-      const updatedProduct = { ...updateFormData, id: productId };
-      await productService.updateProduct(updatedProduct, token);
-      fetchProducts();
-    } catch (error) {
-      console.error("Error updating product:", error);
-    }
   };
 
   const handleDelete = async (id: number) => {
@@ -158,12 +168,13 @@ const ProductsPage: React.FC = () => {
 
   const handleEdit = (product: any) => {
     setIsDropdownOpen(!isDropdownOpen);
-    setUpdateFormData({
+    setUpdateFormData((prevFormData: UpdateFormData) => ({
+      ...prevFormData,
       id: product.id,
       name: product.name,
       quantity: product.quantity,
       price: product.price,
-    });
+    }));
   };
 
   const toggleConfirmation = (productId: number | null) => {
@@ -211,7 +222,20 @@ const ProductsPage: React.FC = () => {
       return;
     }
 
-    handleUpdate(productId);
+    try {
+      const token = Cookies.get("token") || "";
+      const updatedProduct = { ...updateFormData, id: productId };
+      await productService.updateProduct(updatedProduct, token);
+      fetchProducts();
+      setUpdateFormData({
+        id: "",
+        name: "",
+        quantity: "",
+        price: "",
+      });
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
 
   return (
