@@ -92,6 +92,19 @@ const ProductService = {
       throw error;
     }
   },
+
+  searchProducts: async (token: string | null, query: string) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/product/search?name=${query}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
 
 export default ProductService;

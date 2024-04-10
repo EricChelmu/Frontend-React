@@ -19,6 +19,7 @@ const ProductForm = () => {
   const [quantityError, setQuantityError] = useState<string | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
   const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const categoriesPerPage = 12;
@@ -114,6 +115,10 @@ const ProductForm = () => {
       }
       await ProductService.postProduct(formData, token);
       console.log("Product created successfully:", formData);
+      setSuccessMessage("Product created successfully");
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 2000);
       setFormData({
         name: "",
         price: "",
@@ -144,7 +149,7 @@ const ProductForm = () => {
           <input type="text" name="quantity" value={formData.quantity} onChange={handleChange} />
           {quantityError && <div className="error-message">{quantityError}</div>}
         </div>
-        <div>
+        <div className="flex flex-col gap-2">
           <label>Category:</label>
           <CategoryListbox
             value={formData.categoryId}
@@ -160,6 +165,7 @@ const ProductForm = () => {
             ))}
           </ul>
         </div>
+        {successMessage && <div className="success-message">{successMessage}</div>}
         <button type="submit" className="submit-button">
           Create Product
         </button>

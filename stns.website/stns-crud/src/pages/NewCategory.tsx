@@ -14,6 +14,7 @@ const NewCategory: React.FC = () => {
     products: [],
   };
   const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [categorySuccess, setCategorySuccess] = useState<boolean>(false);
 
   const [categoryData, setCategoryData] = useState<CategoryData>(initialCategoryData);
 
@@ -32,12 +33,16 @@ const NewCategory: React.FC = () => {
       const token = Cookies.get("token") || "";
 
       const requestData = {
-        category: categoryData, // Wrapping categoryData inside the 'category' field
+        category: categoryData,
       };
 
       await categoryService.postCategory(requestData, token);
 
       setCategoryData(initialCategoryData);
+      setCategorySuccess(true);
+      setTimeout(() => {
+        setCategorySuccess(false);
+      }, 2000);
     } catch (error) {
       console.error("Error posting category:", error);
       setCategoryError("An error occurred while submitting the category. Please try again.");
@@ -61,7 +66,7 @@ const NewCategory: React.FC = () => {
         </div>
 
         {categoryError && <div className="error-message">{categoryError}</div>}
-
+        {categorySuccess && <div className="success-message">Category submitted successfully!</div>}
         <div className="button-group">
           <button className="button" type="submit">
             Submit Category

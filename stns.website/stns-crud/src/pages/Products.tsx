@@ -9,6 +9,7 @@ const ProductsPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(12);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [updateFormData, setUpdateFormData] = useState<any>({
     id: "",
     name: "",
@@ -18,12 +19,10 @@ const ProductsPage: React.FC = () => {
   const [nameError, setNameError] = useState<string | null>(null);
   const [quantityError, setQuantityError] = useState<string | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   interface UpdateFormData {
@@ -35,7 +34,7 @@ const ProductsPage: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, pageSize, searchQuery]);
+  }, [currentPage, pageSize]);
 
   useEffect(() => {
     setUpdateFormData({
@@ -71,19 +70,6 @@ const ProductsPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [loading]);
 
-  /*useEffect(() => {
-    console.log("searchQuery changed:", searchQuery);
-    console.log("products changed:", products);
-    const filtered =
-      searchQuery.trim() === ""
-        ? products
-        : products.filter(product =>
-            product.name.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-    console.log("Filtered products:", filtered);
-    setFilteredProducts(filtered);
-  }, [searchQuery, products]);*/
-
   const loadMore = () => {
     if (currentPage < totalPages) {
       setCurrentPage(prevPage => prevPage + 1);
@@ -112,33 +98,46 @@ const ProductsPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    filterProducts();
-  }, [searchQuery, products]);
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    fetchSearchResults(event.target.value);
+  };
 
-  const filterProducts = () => {
-    const filtered =
-      searchQuery.trim() === ""
-        ? products
-        : products.filter(product =>
-            product.name.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-    setFilteredProducts(filtered);
+  const fetchSearchResults = async (query: string) => {
+    try {
+      setLoading(true);
+      const token = Cookies.get("token") || "";
+      const response = await productService.searchProducts(token, query);
+
+      setProducts(response);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  };
+
+  const handlePaginationAndSearch = (page: number) => {
+    setCurrentPage(page);
+    if (searchQuery) {
+      fetchSearchResults(searchQuery);
+    } else {
+      fetchProducts();
+    }
   };
 
   const goToPage = (page: number) => {
-    setCurrentPage(page);
+    handlePaginationAndSearch(page);
   };
 
   const loadPrevious = () => {
     if (currentPage > 1) {
-      goToPage(currentPage - 1);
+      handlePaginationAndSearch(currentPage - 1);
     }
   };
 
   const loadNext = () => {
     if (currentPage < totalPages) {
-      goToPage(currentPage + 1);
+      handlePaginationAndSearch(currentPage + 1);
     }
   };
 
@@ -160,10 +159,6 @@ const ProductsPage: React.FC = () => {
     } catch (error) {
       console.error("Error deleting product:", error);
     }
-  };
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
   };
 
   const handleEdit = (product: any) => {
@@ -244,9 +239,9 @@ const ProductsPage: React.FC = () => {
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Search by product name"
+          placeholder="Search by name"
           value={searchQuery}
-          onChange={handleSearch}
+          onChange={handleSearchChange}
         />
       </div>
       <div className="page-size-selector">
@@ -259,10 +254,10 @@ const ProductsPage: React.FC = () => {
           <option value="48">48</option>
         </select>
       </div>
-      {filteredProducts && filteredProducts.length > 0 ? (
+      {products && products.length > 0 ? (
         <React.Fragment>
           <ul className="product-grid">
-            {filteredProducts.map(product => (
+            {products.map(product => (
               <li key={product.id} className="product-item">
                 <strong className="product-name">Name:</strong> {product.name}{" "}
                 <strong>Quantity:</strong> {product.quantity}
