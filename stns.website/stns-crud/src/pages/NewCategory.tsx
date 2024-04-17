@@ -50,29 +50,33 @@ const NewCategory: React.FC = () => {
   };
 
   return (
-    <div className="container">
-      <h2>New Category</h2>
-      <form className="form" onSubmit={handleFormSubmit}>
-        {/* Form field for category name */}
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={categoryData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
+    <div className="flex justify-center items-start min-w-screen">
+      <div className="w-1/2 mt-10">
+        <h2 className="text-center mb-4">New Category</h2>
+        <form className="form" onSubmit={handleFormSubmit}>
+          <div className="mb-4">
+            <label>Name:</label>
+            <input
+              className="w-full px-3 py-2 border rounded-md"
+              type="text"
+              name="name"
+              value={categoryData.name}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
 
-        {categoryError && <div className="error-message">{categoryError}</div>}
-        {categorySuccess && <div className="success-message">Category submitted successfully!</div>}
-        <div className="button-group">
-          <button className="button" type="submit">
-            Submit Category
-          </button>
-        </div>
-      </form>
+          {categoryError && <div className="error-message">{categoryError}</div>}
+          {categorySuccess && (
+            <div className="success-message">Category submitted successfully!</div>
+          )}
+          <div className="button-group flex justify-center">
+            <button className="button" type="submit">
+              Submit Category
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

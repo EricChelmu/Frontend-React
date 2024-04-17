@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import RegistrationForm from "./components/RegistrationForm";
 import LoginForm from "./components/LoginForm";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
@@ -12,13 +12,6 @@ import NewProduct from "./pages/NewProduct";
 
 const App: React.FC = () => {
   const [isLoggedIn, setLoggedIn] = React.useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
-      setLoggedIn(true);
-    }
-  }, []);
 
   const handleLogin = (formData: { username: string; password: string }) => {
     console.log("Login data:", formData);

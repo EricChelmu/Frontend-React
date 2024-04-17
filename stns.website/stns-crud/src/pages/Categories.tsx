@@ -66,11 +66,15 @@ const CategoriesPage: React.FC = () => {
             ))}
           </div>
           <div className="pagination">
-            <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+            <button className="button" onClick={handlePreviousPage} disabled={currentPage === 1}>
               Previous
             </button>
             <span>{`${currentPage} / ${totalPages}`}</span>
-            <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+            <button
+              className="button"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
               Next
             </button>
           </div>

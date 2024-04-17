@@ -125,10 +125,6 @@ const ProductsPage: React.FC = () => {
     }
   };
 
-  const goToPage = (page: number) => {
-    handlePaginationAndSearch(page);
-  };
-
   const loadPrevious = () => {
     if (currentPage > 1) {
       handlePaginationAndSearch(currentPage - 1);
