@@ -3,6 +3,7 @@ import productService from "../services/ProductService";
 import Cookies from "js-cookie";
 import "../assets/css/AllProductsPage.css";
 import "../index.css";
+import placeholderImage from "../assets/placeholderImage.jpg";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -99,8 +100,13 @@ const ProductsPage: React.FC = () => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-    fetchSearchResults(event.target.value);
+    const query = event.target.value;
+    setSearchQuery(query);
+    if (query.trim() === "") {
+      fetchProducts();
+    } else {
+      fetchSearchResults(query);
+    }
   };
 
   const fetchSearchResults = async (query: string) => {
@@ -255,6 +261,15 @@ const ProductsPage: React.FC = () => {
           <ul className="product-grid">
             {products.map(product => (
               <li key={product.id} className="product-item">
+                {product.imagePath ? (
+                  <img
+                    src={`http://localhost:9191/image/${product.imagePath.split("\\").pop()}`}
+                    alt={product.name}
+                    className="product-image"
+                  />
+                ) : (
+                  <img src={placeholderImage} alt="Placeholder" className="placeholder-image" />
+                )}
                 <strong className="product-name">Name:</strong> {product.name}{" "}
                 <strong>Quantity:</strong> {product.quantity}
                 <strong>Price:</strong> {product.price} <strong>Category:</strong>{" "}
