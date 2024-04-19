@@ -11,3 +11,7 @@ export const login = (token: string) => {
 export const logout = () => {
   Cookies.remove("token");
 };
+
+export const getToken = () => {
+  return Cookies.get("token") || "";
+};

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import productService from "../services/ProductService";
-import Cookies from "js-cookie";
+import { getToken } from "../utils/AuthUtils";
 import "../assets/css/AllProductsPage.css";
 import "../index.css";
-import placeholderImage from "../assets/placeholderImage.jpg";
+import placeholderImage from "../assets/images/placeholderImage.jpg";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -80,7 +80,7 @@ const ProductsPage: React.FC = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const token = Cookies.get("token") || "";
+      const token = getToken();
       const response = await productService.getPaginatedProducts(token, currentPage, pageSize);
 
       if (currentPage === 1) {
@@ -112,7 +112,7 @@ const ProductsPage: React.FC = () => {
   const fetchSearchResults = async (query: string) => {
     try {
       setLoading(true);
-      const token = Cookies.get("token") || "";
+      const token = getToken();
       const response = await productService.searchProducts(token, query);
 
       setProducts(response);
@@ -155,7 +155,7 @@ const ProductsPage: React.FC = () => {
         return;
       }
       setShowConfirmation(false);
-      const token = Cookies.get("token") || "";
+      const token = getToken();
       await productService.deleteProduct(id, token);
       fetchProducts();
     } catch (error) {
@@ -220,7 +220,7 @@ const ProductsPage: React.FC = () => {
     }
 
     try {
-      const token = Cookies.get("token") || "";
+      const token = getToken();
       const updatedProduct = { ...updateFormData, id: productId };
       await productService.updateProduct(updatedProduct, token);
       fetchProducts();
@@ -233,6 +233,10 @@ const ProductsPage: React.FC = () => {
     } catch (error) {
       console.error("Error updating product:", error);
     }
+  };
+
+  const getImagePath = (imageName: string) => {
+    return `src/assets/images/${imageName}`;
   };
 
   return (
@@ -261,9 +265,13 @@ const ProductsPage: React.FC = () => {
           <ul className="product-grid">
             {products.map(product => (
               <li key={product.id} className="product-item">
+                {console.log(
+                  "Image Path:",
+                  `../assets/images/${product.imagePath.split("\\").pop()}`
+                )}
                 {product.imagePath ? (
                   <img
-                    src={`http://localhost:9191/image/${product.imagePath.split("\\").pop()}`}
+                    src={getImagePath(product.imagePath.split("\\").pop() || "")}
                     alt={product.name}
                     className="product-image"
                   />

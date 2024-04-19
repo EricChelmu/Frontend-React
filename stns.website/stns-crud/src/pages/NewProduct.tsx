@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { CategoryData } from "./Categories";
-import Cookies from "js-cookie";
+import { getToken } from "../utils/AuthUtils";
 import CategoryService from "../services/CategoryService";
 import ProductService from "../services/ProductService";
 import CategoryListbox from "../components/CategoryListBox";
@@ -63,7 +63,7 @@ const ProductForm = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const token = Cookies.get("token") || "";
+        const token = getToken();
         const response = await CategoryService.getPaginatedCategories(
           token,
           currentPage,
@@ -99,7 +99,7 @@ const ProductForm = () => {
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
     e.preventDefault();
     try {
-      const token = Cookies.get("token") || "";
+      const token = getToken();
       if (!validateInput()) {
         console.error("Invalid input data");
         return;

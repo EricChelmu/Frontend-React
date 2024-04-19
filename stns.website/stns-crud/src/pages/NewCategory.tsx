@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import categoryService from "../services/CategoryService";
-import Cookies from "js-cookie";
+import { getToken } from "../utils/AuthUtils";
 import "../assets/css/NewCategory.css";
 
 interface CategoryData {
@@ -30,7 +30,7 @@ const NewCategory: React.FC = () => {
     e.preventDefault();
     setCategoryError(null);
     try {
-      const token = Cookies.get("token") || "";
+      const token = getToken();
 
       const requestData = {
         category: categoryData,
