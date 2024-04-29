@@ -87,6 +87,10 @@ select:focus {
 
 
 input:invalid {
+  border-color: #ccc;
+}
+
+input:invalid:focus {
   border-color: #dc3545;
 }
 

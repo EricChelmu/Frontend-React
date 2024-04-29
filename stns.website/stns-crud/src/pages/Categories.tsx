@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import categoryService from "../services/CategoryService";
-import { getToken } from "../utils/AuthUtils";
+import { getAccessToken } from "../utils/AuthUtils";
 import CategoryBox from "../components/CategoryBox";
 import "../assets/css/AllCategories.css";
 
@@ -25,7 +25,7 @@ const CategoriesPage: React.FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const token = getToken();
+        const token = getAccessToken();
         const response = await categoryService.getPaginatedCategories(
           token,
           currentPage,

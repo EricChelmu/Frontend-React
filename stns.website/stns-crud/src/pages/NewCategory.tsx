@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import categoryService from "../services/CategoryService";
-import { getToken } from "../utils/AuthUtils";
+import { getAccessToken } from "../utils/AuthUtils";
 import "../assets/css/NewCategory.css";
 
 interface CategoryData {
@@ -30,7 +30,7 @@ const NewCategory: React.FC = () => {
     e.preventDefault();
     setCategoryError(null);
     try {
-      const token = getToken();
+      const token = getAccessToken();
 
       const requestData = {
         category: categoryData,

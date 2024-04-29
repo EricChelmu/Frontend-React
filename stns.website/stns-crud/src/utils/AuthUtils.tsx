@@ -1,17 +1,23 @@
 import Cookies from "js-cookie";
 
 export const isLoggedIn = () => {
-  return !!Cookies.get("token");
+  return !!Cookies.get("accessToken");
 };
 
-export const login = (token: string) => {
-  Cookies.set("token", token);
+export const login = (accessToken: string, refreshToken: string) => {
+  Cookies.set("accessToken", accessToken, { sameSite: "None", secure: true });
+  Cookies.set("refreshToken", refreshToken, { sameSite: "None", secure: true });
 };
 
 export const logout = () => {
-  Cookies.remove("token");
+  Cookies.remove("accessToken");
+  Cookies.remove("refreshToken");
 };
 
-export const getToken = () => {
-  return Cookies.get("token") || "";
+export const getAccessToken = () => {
+  return Cookies.get("accessToken") || "";
+};
+
+export const getRefreshToken = () => {
+  return Cookies.get("refreshToken") || "";
 };

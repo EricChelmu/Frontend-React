@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import productService from "../services/ProductService";
-import { getToken } from "../utils/AuthUtils";
+import { getAccessToken } from "../utils/AuthUtils";
 import "../assets/css/AllProductsPage.css";
 import "../index.css";
 import placeholderImage from "../assets/images/placeholderImage.jpg";
@@ -80,7 +80,7 @@ const ProductsPage: React.FC = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const token = getToken();
+      const token = getAccessToken();
       const response = await productService.getPaginatedProducts(token, currentPage, pageSize);
 
       if (currentPage === 1) {
@@ -112,7 +112,7 @@ const ProductsPage: React.FC = () => {
   const fetchSearchResults = async (query: string) => {
     try {
       setLoading(true);
-      const token = getToken();
+      const token = getAccessToken();
       const response = await productService.searchProducts(token, query);
 
       setProducts(response);
@@ -155,7 +155,7 @@ const ProductsPage: React.FC = () => {
         return;
       }
       setShowConfirmation(false);
-      const token = getToken();
+      const token = getAccessToken();
       await productService.deleteProduct(id, token);
       fetchProducts();
     } catch (error) {
@@ -220,7 +220,7 @@ const ProductsPage: React.FC = () => {
     }
 
     try {
-      const token = getToken();
+      const token = getAccessToken();
       const updatedProduct = { ...updateFormData, id: productId };
       await productService.updateProduct(updatedProduct, token);
       fetchProducts();
