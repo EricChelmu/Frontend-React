@@ -24,66 +24,64 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <AuthProvider>
-        <div>
-          <nav>
-            <ul>
+    <AuthProvider>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/register">Register</Link>
+            </li>
+            {!isLoggedIn ? (
               <li>
-                <Link to="/register">Register</Link>
+                <Link to="/login">Login</Link>
               </li>
-              {!isLoggedIn ? (
+            ) : (
+              <li>
+                <button className="nav-button" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+            )}
+            {isLoggedIn && (
+              <React.Fragment>
                 <li>
-                  <Link to="/login">Login</Link>
+                  <Link to="/new-category">New Category</Link>
                 </li>
-              ) : (
                 <li>
-                  <button className="nav-button" onClick={handleLogout}>
-                    Logout
-                  </button>
+                  <Link to="/all-categories">All Categories</Link>
                 </li>
-              )}
-              {isLoggedIn && (
-                <React.Fragment>
-                  <li>
-                    <Link to="/new-category">New Category</Link>
-                  </li>
-                  <li>
-                    <Link to="/all-categories">All Categories</Link>
-                  </li>
-                  <li>
-                    <Link to="/all-products">All Products</Link>
-                  </li>
-                  <li>
-                    <Link to="/new-product">New Product</Link>
-                  </li>
-                </React.Fragment>
-              )}
-            </ul>
-          </nav>
+                <li>
+                  <Link to="/all-products">All Products</Link>
+                </li>
+                <li>
+                  <Link to="/new-product">New Product</Link>
+                </li>
+              </React.Fragment>
+            )}
+          </ul>
+        </nav>
 
-          <Routes>
-            <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
-            <Route
-              path="/register"
-              element={
-                <RegistrationForm
-                  onRegistration={(formData: any) => {
-                    console.log("Registration data:", formData);
-                  }}
-                />
-              }
-            />
-            <Route element={<PrivateRoutes />}>
-              <Route path="/new-category" element={<NewCategory />} />
-              <Route path="/all-categories" element={<CategoriesPage />} />
-              <Route path="/all-products" element={<ProductsPage />} />
-              <Route path="/new-product" element={<NewProduct />} />
-            </Route>
-          </Routes>
-        </div>
-      </AuthProvider>
-    </Router>
+        <Routes>
+          <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
+          <Route
+            path="/register"
+            element={
+              <RegistrationForm
+                onRegistration={(formData: any) => {
+                  console.log("Registration data:", formData);
+                }}
+              />
+            }
+          />
+          <Route element={<PrivateRoutes />}>
+            <Route path="/new-category" element={<NewCategory />} />
+            <Route path="/all-categories" element={<CategoriesPage />} />
+            <Route path="/all-products" element={<ProductsPage />} />
+            <Route path="/new-product" element={<NewProduct />} />
+          </Route>
+        </Routes>
+      </div>
+    </AuthProvider>
   );
 };
 
