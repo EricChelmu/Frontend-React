@@ -1,7 +1,7 @@
 import React from "react";
 import RegistrationForm from "./components/RegistrationForm";
 import LoginForm from "./components/LoginForm";
-import { Route, Routes, Link } from "react-router-dom";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import NewCategory from "./pages/NewCategory";
 import CategoriesPage from "./pages/Categories";
 import ProductsPage from "./pages/Products";
@@ -9,11 +9,15 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 import Cookies from "js-cookie";
 import { useAuth } from "./context/AuthContext";
 import NewProduct from "./pages/NewProduct";
-import { useNavigate } from "react-router-dom";
+import Cart from "./components/Cart";
+import { useCart } from "./context/CartContext";
+import cartIcon from "./assets/images/cartIcon.png"; // Import your cart icon image
 
 const App: React.FC = () => {
   const { token, setToken } = useAuth();
+  const { cart } = useCart();
   const [isLoggedIn, setLoggedIn] = React.useState(!!token);
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -33,9 +37,13 @@ const App: React.FC = () => {
     navigate("/login");
   };
 
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
   return (
     <div>
-      <nav>
+      <nav className="navbar">
         <ul>
           <li>
             <Link to="/register">Register</Link>
@@ -45,13 +53,6 @@ const App: React.FC = () => {
               <Link to="/login">Login</Link>
             </li>
           ) : (
-            <li>
-              <button className="nav-button" onClick={handleLogout}>
-                Logout
-              </button>
-            </li>
-          )}
-          {isLoggedIn && (
             <>
               <li>
                 <Link to="/new-category">New Category</Link>
@@ -65,10 +66,23 @@ const App: React.FC = () => {
               <li>
                 <Link to="/new-product">New Product</Link>
               </li>
+              <li>
+                <button className="nav-button" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
             </>
           )}
         </ul>
+        {isLoggedIn && (
+          <div className="cart-icon" onClick={toggleCart}>
+            <img src={cartIcon} alt="Cart" />
+            <span className="cart-count">{cart.length}</span>
+          </div>
+        )}
       </nav>
+
+      {isCartOpen && <Cart />}
 
       <Routes>
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />

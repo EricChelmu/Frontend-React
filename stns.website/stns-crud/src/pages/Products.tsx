@@ -4,6 +4,7 @@ import { getToken } from "../utils/AuthUtils";
 import "../assets/css/AllProductsPage.css";
 import "../index.css";
 import placeholderImage from "../assets/images/placeholderImage.jpg";
+import { useCart } from "../context/CartContext";
 
 const ProductsPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -25,6 +26,7 @@ const ProductsPage: React.FC = () => {
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { addToCart } = useCart();
 
   interface UpdateFormData {
     id: string;
@@ -239,6 +241,17 @@ const ProductsPage: React.FC = () => {
     return `src/assets/images/${imageName}`;
   };
 
+  const handleAddToCart = (product: any) => {
+    const item = {
+      id: product.id,
+      name: product.name,
+      quantity: 1,
+      price: product.price,
+    };
+    addToCart(item);
+    console.log(`Added ${product.name} to the cart`);
+  };
+
   return (
     <div className="all-products">
       <h2>All Products</h2>
@@ -346,6 +359,9 @@ const ProductsPage: React.FC = () => {
                     </div>
                   )}
                 </div>
+                <button className="button" onClick={() => handleAddToCart(product)}>
+                  Add to Cart
+                </button>
               </li>
             ))}
           </ul>
