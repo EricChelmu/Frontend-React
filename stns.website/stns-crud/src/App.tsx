@@ -9,10 +9,12 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 import Cookies from "js-cookie";
 import { useAuth } from "./context/AuthContext";
 import NewProduct from "./pages/NewProduct";
+import { useNavigate } from "react-router-dom";
 
 const App: React.FC = () => {
   const { token, setToken } = useAuth();
   const [isLoggedIn, setLoggedIn] = React.useState(!!token);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     setLoggedIn(!!token);
@@ -28,6 +30,7 @@ const App: React.FC = () => {
     localStorage.removeItem("token");
     setToken(null);
     setLoggedIn(false);
+    navigate("/login");
   };
 
   return (
