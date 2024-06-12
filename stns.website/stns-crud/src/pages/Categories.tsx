@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import categoryService from "../services/CategoryService";
 import { getToken } from "../utils/AuthUtils";
-import CategoryBox from "../components/CategoryBox";
 import "../assets/css/AllCategories.css";
 
 interface ProductData {
@@ -15,6 +14,7 @@ export interface CategoryData {
   id: number;
   name: string;
   products: ProductData[];
+  showAllProducts?: boolean;
 }
 
 const CategoriesPage: React.FC = () => {
@@ -55,33 +55,50 @@ const CategoriesPage: React.FC = () => {
     }
   };
 
+  const handleShowMore = (categoryId: number) => {
+    setCategories(prevCategories =>
+      prevCategories.map(category =>
+        category.id === categoryId ? { ...category, showAllProducts: true } : category
+      )
+    );
+  };
+
   return (
-    <div className="all-categories">
+    <div className="centered-container">
       <h2>All Categories</h2>
       {categories && categories.length > 0 ? (
-        <div>
-          <div className="category-boxes">
-            {categories.map(category => (
-              <CategoryBox key={category.id} category={category} />
-            ))}
-          </div>
-          <div className="pagination">
-            <button className="button" onClick={handlePreviousPage} disabled={currentPage === 1}>
-              Previous
-            </button>
-            <span>{`${currentPage} / ${totalPages}`}</span>
-            <button
-              className="button"
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+        <div className="category-boxes">
+          {categories.map(category => (
+            <div key={category.id} className="category-box">
+              <h3>{category.name}</h3>
+              <ul>
+                {category.products
+                  .slice(0, category.showAllProducts ? undefined : 4)
+                  .map(product => (
+                    <li key={product.id}>
+                      <strong>{product.name}</strong> - Quantity: {product.quantity}, Price:{" "}
+                      {product.price}
+                    </li>
+                  ))}
+              </ul>
+              {!category.showAllProducts && (
+                <button onClick={() => handleShowMore(category.id)}>Show more</button>
+              )}
+            </div>
+          ))}
         </div>
       ) : (
         <p>No categories found.</p>
       )}
+      <div className="pagination">
+        <button className="button" onClick={handlePreviousPage} disabled={currentPage === 1}>
+          Previous
+        </button>
+        <span>{`${currentPage} / ${totalPages}`}</span>
+        <button className="button" onClick={handleNextPage} disabled={currentPage === totalPages}>
+          Next
+        </button>
+      </div>
     </div>
   );
 };

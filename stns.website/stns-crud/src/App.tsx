@@ -11,7 +11,8 @@ import { useAuth } from "./context/AuthContext";
 import NewProduct from "./pages/NewProduct";
 import Cart from "./components/Cart";
 import { useCart } from "./context/CartContext";
-import cartIcon from "./assets/images/cartIcon.png"; // Import your cart icon image
+import cartIcon from "./assets/images/cartIcon.png";
+import Checkout from "./pages/Checkout";
 
 const App: React.FC = () => {
   const { token, setToken } = useAuth();
@@ -101,6 +102,7 @@ const App: React.FC = () => {
           <Route path="/all-categories" element={<CategoriesPage />} />
           <Route path="/all-products" element={<ProductsPage />} />
           <Route path="/new-product" element={<NewProduct />} />
+          <Route path="/checkout" element={<Checkout />} /> {/* Add route for the Checkout page */}
         </Route>
       </Routes>
     </div>

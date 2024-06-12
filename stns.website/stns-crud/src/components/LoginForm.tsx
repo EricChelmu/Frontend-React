@@ -6,6 +6,9 @@ import "../assets/css/LoginPage.css";
 import "../assets/css/ErrorMessage.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import apiCall from "../utils/ApiCall";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface LoginFormProps {
   onLogin: (formData: { username: string; password: string }) => void;
@@ -52,11 +55,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     setLoginError(null);
 
     try {
-      const response = await axios.post("http://localhost:9191/users/authenticate", formData, {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+      const response = await apiCall({
+        method: "POST",
+        url: `${API_URL}/users/authenticate`,
+        data: formData,
       });
 
       const token = response.data.token;

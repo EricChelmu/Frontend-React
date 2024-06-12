@@ -3,7 +3,7 @@ import { useCart } from "../context/CartContext";
 import "../assets/css/Cart.css";
 
 const Cart: React.FC = () => {
-  const { cart, removeFromCart, clearCart } = useCart();
+  const { cart } = useCart();
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -21,15 +21,15 @@ const Cart: React.FC = () => {
               <span>{item.name}</span>
               <span>{item.quantity}</span>
               <span>${item.price}</span>
-              <button onClick={() => removeFromCart(item.id)}>Remove</button>
             </li>
           ))}
         </ul>
       )}
       <div className="cart-total">
         <h3>Total: ${getTotalPrice().toFixed(2)}</h3>
+        {/* Proceed to Checkout button */}
+        <button onClick={() => console.log("Proceed to Checkout")}>Proceed to Checkout</button>
       </div>
-      {cart.length > 0 && <button onClick={clearCart}>Clear Cart</button>}
     </div>
   );
 };
