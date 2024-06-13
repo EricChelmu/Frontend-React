@@ -67,26 +67,36 @@ const CategoriesPage: React.FC = () => {
     <div className="centered-container">
       <h2>All Categories</h2>
       {categories && categories.length > 0 ? (
-        <div className="category-boxes">
-          {categories.map(category => (
-            <div key={category.id} className="category-box">
-              <h3>{category.name}</h3>
-              <ul>
-                {category.products
-                  .slice(0, category.showAllProducts ? undefined : 4)
-                  .map(product => (
-                    <li key={product.id}>
-                      <strong>{product.name}</strong> - Quantity: {product.quantity}, Price:{" "}
-                      {product.price}
-                    </li>
-                  ))}
-              </ul>
-              {!category.showAllProducts && (
-                <button onClick={() => handleShowMore(category.id)}>Show more</button>
-              )}
-            </div>
-          ))}
-        </div>
+        <table className="category-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Products</th>
+            </tr>
+          </thead>
+          <tbody>
+            {categories.map(category => (
+              <tr key={category.id} className="category-row">
+                <td>{category.name}</td>
+                <td>
+                  <ul>
+                    {category.products
+                      .slice(0, category.showAllProducts ? undefined : 4)
+                      .map(product => (
+                        <li key={product.id}>
+                          <strong>{product.name}</strong> - Quantity: {product.quantity}, Price:{" "}
+                          {product.price}
+                        </li>
+                      ))}
+                  </ul>
+                  {!category.showAllProducts && (
+                    <button onClick={() => handleShowMore(category.id)}>Show more</button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       ) : (
         <p>No categories found.</p>
       )}
