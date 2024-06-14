@@ -252,6 +252,10 @@ const ProductsPage: React.FC = () => {
     console.log(`Added ${product.name} to the cart`);
   };
 
+  const roundToTwoDecimals = (num: number) => {
+    return Math.round(num * 100) / 100;
+  };
+
   return (
     <div className="all-products">
       <h2>All Products</h2>
@@ -293,8 +297,8 @@ const ProductsPage: React.FC = () => {
                 )}
                 <strong className="product-name">Name:</strong> {product.name}{" "}
                 <strong>Quantity:</strong> {product.quantity}
-                <strong>Price:</strong> {product.price} <strong>Category:</strong>{" "}
-                {product.category}
+                <strong>Price:</strong> {roundToTwoDecimals(product.price)}{" "}
+                <strong>Category:</strong> {product.category}
                 <div className="edit-dropdown" ref={dropdownRef}>
                   <button className="button" onClick={() => handleEdit(product)}>
                     Edit

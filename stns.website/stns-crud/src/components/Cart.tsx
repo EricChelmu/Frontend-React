@@ -1,12 +1,18 @@
 import React from "react";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 import "../assets/css/Cart.css";
 
 const Cart: React.FC = () => {
   const { cart } = useCart();
+  const navigate = useNavigate();
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+  const handleProceedToCheckout = () => {
+    navigate("/checkout");
   };
 
   return (
@@ -28,7 +34,7 @@ const Cart: React.FC = () => {
       <div className="cart-total">
         <h3>Total: ${getTotalPrice().toFixed(2)}</h3>
         {/* Proceed to Checkout button */}
-        <button onClick={() => console.log("Proceed to Checkout")}>Proceed to Checkout</button>
+        <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
       </div>
     </div>
   );

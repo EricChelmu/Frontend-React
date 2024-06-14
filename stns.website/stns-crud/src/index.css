@@ -85,12 +85,6 @@ select:focus {
   box-shadow: 0 0 5px #1dc44f;
 }
 
-
-input:invalid {
-  border-color: #dc3545;
-}
-
-
 .error-message {
   color: #dc3545;
   font-size: 14px;
