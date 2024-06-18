@@ -25,8 +25,12 @@ const ProductsPage: React.FC = () => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [deleteProductId, setDeleteProductId] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
+
   const { addToCart } = useCart();
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   interface UpdateFormData {
     id: string;
@@ -37,7 +41,7 @@ const ProductsPage: React.FC = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, pageSize]);
+  }, [currentPage, pageSize, categoryId, minPrice, maxPrice]);
 
   useEffect(() => {
     setUpdateFormData({
@@ -81,21 +85,16 @@ const ProductsPage: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      setLoading(true);
       const token = getToken();
-      const response = await productService.getPaginatedProducts(token, currentPage, pageSize);
+      const response = await productService.getProductsByCategoryAndPriceRange(
+        token,
+        categoryId,
+        minPrice,
+        maxPrice
+      );
 
-      if (currentPage === 1) {
-        setProducts([]);
-      }
-
-      const uniqueProducts = response.content.filter((newProduct: any) => {
-        return !products.some((existingProduct: any) => existingProduct.id === newProduct.id);
-      });
-
-      setProducts(prevProducts => [...prevProducts, ...uniqueProducts]);
+      setProducts(response);
       setTotalPages(response.totalPages);
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -256,16 +255,52 @@ const ProductsPage: React.FC = () => {
     return Math.round(num * 100) / 100;
   };
 
+  const applyFilters = () => {
+    handlePaginationAndSearch(1);
+  };
+
   return (
     <div className="all-products">
       <h2>All Products</h2>
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search by name"
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
+      <div className="filters">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search by name"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <div className="filter-section">
+          <label htmlFor="categoryId">Category ID:</label>
+          <input
+            type="number"
+            id="categoryId"
+            value={categoryId || ""}
+            onChange={e => setCategoryId(e.target.value ? Number(e.target.value) : null)}
+          />
+        </div>
+        <div className="filter-section">
+          <label htmlFor="minPrice">Min Price:</label>
+          <input
+            type="number"
+            id="minPrice"
+            value={minPrice}
+            onChange={e => setMinPrice(e.target.value)}
+          />
+        </div>
+        <div className="filter-section">
+          <label htmlFor="maxPrice">Max Price:</label>
+          <input
+            type="number"
+            id="maxPrice"
+            value={maxPrice}
+            onChange={e => setMaxPrice(e.target.value)}
+          />
+        </div>
+        <button className="button apply-filter-button" onClick={applyFilters}>
+          Apply Filters
+        </button>
       </div>
       <div className="page-size-selector">
         <label htmlFor="pageSize">Products per page:</label>
@@ -282,10 +317,6 @@ const ProductsPage: React.FC = () => {
           <ul className="product-grid">
             {products.map(product => (
               <li key={product.id} className="product-item">
-                {console.log(
-                  "Image Path:",
-                  `../assets/images/${product.imagePath.split("\\").pop()}`
-                )}
                 {product.imagePath ? (
                   <img
                     src={getImagePath(product.imagePath.split("\\").pop() || "")}
