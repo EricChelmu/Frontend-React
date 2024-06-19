@@ -3,24 +3,18 @@ import categoryService from "../services/CategoryService";
 import { getToken } from "../utils/AuthUtils";
 import "../assets/css/AllCategories.css";
 
-interface ProductData {
-  id: number;
-  name: string;
-  quantity: number;
-  price: number;
-}
-
 export interface CategoryData {
   id: number;
   name: string;
-  products: ProductData[];
-  showAllProducts?: boolean;
+  description: string;
+  productCount: number;
 }
 
 const CategoriesPage: React.FC = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const categoriesPerPage = 10;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -41,26 +35,16 @@ const CategoriesPage: React.FC = () => {
     fetchCategories();
   }, [currentPage]);
 
-  const categoriesPerPage = 3;
-
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
+    if (currentPage > 0) {
       setCurrentPage(prevPage => prevPage - 1);
     }
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
+    if (currentPage < totalPages - 1) {
       setCurrentPage(prevPage => prevPage + 1);
     }
-  };
-
-  const handleShowMore = (categoryId: number) => {
-    setCategories(prevCategories =>
-      prevCategories.map(category =>
-        category.id === categoryId ? { ...category, showAllProducts: true } : category
-      )
-    );
   };
 
   return (
@@ -71,28 +55,16 @@ const CategoriesPage: React.FC = () => {
           <thead>
             <tr>
               <th>Category</th>
-              <th>Products</th>
+              <th>Description</th>
+              <th>Product Count</th>
             </tr>
           </thead>
           <tbody>
             {categories.map(category => (
               <tr key={category.id} className="category-row">
                 <td>{category.name}</td>
-                <td>
-                  <ul>
-                    {category.products
-                      .slice(0, category.showAllProducts ? undefined : 4)
-                      .map(product => (
-                        <li key={product.id}>
-                          <strong>{product.name}</strong> - Quantity: {product.quantity}, Price:{" "}
-                          {product.price}
-                        </li>
-                      ))}
-                  </ul>
-                  {!category.showAllProducts && (
-                    <button onClick={() => handleShowMore(category.id)}>Show more</button>
-                  )}
-                </td>
+                <td>{category.description}</td>
+                <td>{category.productCount}</td>
               </tr>
             ))}
           </tbody>
@@ -101,11 +73,15 @@ const CategoriesPage: React.FC = () => {
         <p>No categories found.</p>
       )}
       <div className="pagination">
-        <button className="button" onClick={handlePreviousPage} disabled={currentPage === 1}>
+        <button className="button" onClick={handlePreviousPage} disabled={currentPage === 0}>
           Previous
         </button>
-        <span>{`${currentPage} / ${totalPages}`}</span>
-        <button className="button" onClick={handleNextPage} disabled={currentPage === totalPages}>
+        <span>{`${currentPage + 1} / ${totalPages}`}</span>
+        <button
+          className="button"
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages - 1}
+        >
           Next
         </button>
       </div>
