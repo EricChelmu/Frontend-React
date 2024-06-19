@@ -105,39 +105,6 @@ const ProductService = {
       throw error;
     }
   },
-
-  getProductsByCategoryAndPriceRange: async (
-    token: string | null,
-    categoryId: number | null,
-    minPrice: string | null,
-    maxPrice: string | null
-  ) => {
-    try {
-      let url = `${API_BASE_URL}/product/filter`;
-
-      if (categoryId !== null) {
-        url += `?categoryId=${categoryId}`;
-      }
-
-      if (minPrice !== null) {
-        url += `${categoryId !== null ? "&" : "?"}minPrice=${minPrice}`;
-      }
-
-      if (maxPrice !== null) {
-        url += `${categoryId !== null || minPrice !== null ? "&" : "?"}maxPrice=${maxPrice}`;
-      }
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  },
 };
 
 export default ProductService;
