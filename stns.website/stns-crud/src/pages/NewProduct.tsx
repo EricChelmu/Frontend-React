@@ -3,7 +3,7 @@ import { CategoryData } from "./Categories";
 import { getToken } from "../utils/AuthUtils";
 import CategoryService from "../services/CategoryService";
 import ProductService from "../services/ProductService";
-import CategoryListbox from "../components/CategoryListBox";
+import CategoryListBox from "../components/CategoryListBox";
 import "../assets/css/NewProduct.css";
 
 const ProductForm = () => {
@@ -14,7 +14,6 @@ const ProductForm = () => {
     categoryId: "",
   });
   const [categories, setCategories] = useState<CategoryData[]>([]);
-  const [filteredCategories, setFilteredCategories] = useState<CategoryData[]>([]);
   const [nameError, setNameError] = useState<string | null>(null);
   const [quantityError, setQuantityError] = useState<string | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
@@ -64,11 +63,7 @@ const ProductForm = () => {
     const fetchCategories = async () => {
       try {
         const token = getToken();
-        const response = await CategoryService.getPaginatedCategories(
-          token,
-          currentPage,
-          categoriesPerPage
-        );
+        const response = await CategoryService.getAllCategories(token);
         setCategories(response.content);
         setTotalPages(response.totalPages);
       } catch (error) {
@@ -77,23 +72,11 @@ const ProductForm = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [currentPage]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === "category") {
-      handleCategorySearch(value);
-      setFormData({ ...formData, categoryId: value });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleCategorySearch = (searchQuery: string) => {
-    const filtered = categories.filter(category =>
-      category.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredCategories(filtered);
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async e => {
@@ -105,7 +88,7 @@ const ProductForm = () => {
         return;
       }
       const selectedCategory = categories.find(
-        category => category.name.toLowerCase() === formData.categoryId.toLowerCase()
+        category => category.id.toString() === formData.categoryId
       );
       if (selectedCategory) {
         formData.categoryId = selectedCategory.id.toString();
@@ -151,7 +134,7 @@ const ProductForm = () => {
         </div>
         <div className="flex flex-col gap-2">
           <label>Category:</label>
-          <CategoryListbox
+          <CategoryListBox
             value={formData.categoryId}
             onChange={(category: CategoryData) =>
               setFormData({ ...formData, categoryId: category.id.toString() })
@@ -159,11 +142,6 @@ const ProductForm = () => {
             categories={categories}
           />
           {categoryError && <div className="error-message">{categoryError}</div>}
-          <ul className="category-list">
-            {filteredCategories.map(category => (
-              <li key={category.id}>{category.name}</li>
-            ))}
-          </ul>
         </div>
         {successMessage && <div className="success-message">{successMessage}</div>}
         <button type="submit" className="submit-button">

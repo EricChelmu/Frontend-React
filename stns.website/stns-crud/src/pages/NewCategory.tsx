@@ -5,12 +5,14 @@ import "../assets/css/NewCategory.css";
 
 interface CategoryData {
   name: string;
+  description: string;
   products: any[];
 }
 
 const NewCategory: React.FC = () => {
   const initialCategoryData: CategoryData = {
     name: "",
+    description: "",
     products: [],
   };
   const [categoryError, setCategoryError] = useState<string | null>(null);
@@ -33,7 +35,11 @@ const NewCategory: React.FC = () => {
       const token = getToken();
 
       const requestData = {
-        category: categoryData,
+        category: {
+          name: categoryData.name,
+          description: categoryData.description,
+          products: categoryData.products,
+        },
       };
 
       await categoryService.postCategory(requestData, token);
@@ -65,7 +71,16 @@ const NewCategory: React.FC = () => {
               required
             />
           </div>
-
+          <div className="mb-4">
+            <label>Description:</label>
+            <textarea
+              className="w-full px-3 py-2 border rounded-md"
+              name="description"
+              value={categoryData.description}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
           {categoryError && <div className="error-message">{categoryError}</div>}
           {categorySuccess && (
             <div className="success-message">Category submitted successfully!</div>
